@@ -27,6 +27,13 @@ public class enemycontrol : MonoBehaviour
     //‹üŠÇ—
     public float m_fsightAngle = 45.0f;
 
+    //©‹@‚É’e‚ğ”­Ë‚·‚é(•Ï”éŒ¾)
+    [SerializeField] GameObject player;
+    [SerializeField] GameObject ball;
+
+    private float ballSpeed = 10.0f;
+    private float time = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,7 +49,7 @@ public class enemycontrol : MonoBehaviour
         if (enemyHP <= 0)
         {
             //©•ª‚ÅÁ‚¦‚é
-            Destroy(this.gameObject,0.5f);
+            Destroy(this.gameObject, 0.5f);
             //speed = 0.0f;
         }
 
@@ -84,7 +91,7 @@ public class enemycontrol : MonoBehaviour
         {
             StartCoroutine(cameraShake.Shake(0.1f, 0.1f));
             this.GetComponent<ParticleSystem>().Play();
-            Destroy(other.gameObject,3.0f);
+            Destroy(other.gameObject, 3.0f);
         }
     }
 
@@ -97,14 +104,35 @@ public class enemycontrol : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
             Vector3 posDelta = other.transform.position - transform.position;
             float targetAngle = Vector3.Angle(transform.forward, posDelta);
-            if(targetAngle < m_fsightAngle)
+            if (targetAngle < m_fsightAngle)
             {
-                Debug.Log("‹ŠE‚Ì”ÍˆÍ&‹Šo‚ÌŠp“x“à");
+                if (Physics.Raycast(transform.position, posDelta, out RaycastHit hit))
+                {
+                    if (hit.collider == other)
+                    {
+                        //Debug.Log("‹ŠE‚Ì”ÍˆÍ“à&‹ŠE‚ÌŠp“x“à&áŠQ•¨‚È‚µ");
+
+                        //©‹@‚ÉŒü‚©‚Á‚Ä’e‚ğ”­Ë‚·‚é
+                        transform.LookAt(player.transform.transform);
+                        time -= Time.deltaTime;
+                        if(time <= 0)
+                        {
+                            BallShot();
+                            time = 1.0f;
+                        }
+                    }
+                }
             }
         }
+    }
+
+    void BallShot()
+    {
+        GameObject shotObj = Instantiate(ball, transform.position, Quaternion.identity);
+        shotObj.GetComponent<Rigidbody>().velocity = transform.forward * ballSpeed;
     }
 }
