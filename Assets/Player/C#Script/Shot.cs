@@ -25,6 +25,14 @@ public class Shot : MonoBehaviour
     //弾数の表示
     public Text shellLabel;
 
+    //SE
+    private AudioSource audioSource;
+    //音声を受け取る
+    [SerializeField] private AudioClip se;
+
+    //アニメーション
+    private Animator anim;
+
     // Start is called before the first frame update
 
     void Start()
@@ -33,11 +41,16 @@ public class Shot : MonoBehaviour
         speed = 500.0f;
         isdestroyed = true;
         shellLabel.text = "砲弾 : " + count;
+        audioSource = GetComponent<AudioSource>();
+        anim = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        //矢を撃つフラグをFalseにする
+        anim.SetBool("isShot", false);
+
         //enemy変数にgameObjectのタグ"Enemy"を見つける
         enemy = GameObject.FindGameObjectsWithTag("Enemy");
 
@@ -58,7 +71,9 @@ public class Shot : MonoBehaviour
                         //マウスの左クリックを押している尚且つ銃弾が0より大きいなら
                         if (Input.GetMouseButtonUp(0) && count > 0)
                         {
-
+                            anim.SetBool("isShot", true);
+                            //音を鳴らす
+                            audioSource.PlayOneShot(se);
                             //弾を生成する
                             GameObject clone = Instantiate(Bullet, transform.position, Quaternion.identity);
 

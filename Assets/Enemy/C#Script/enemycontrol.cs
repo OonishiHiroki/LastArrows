@@ -38,7 +38,6 @@ public class enemycontrol : MonoBehaviour
     void Start()
     {
         enemyHP = 1;
-        speed = 1.0f;
         audioSource = GetComponent<AudioSource>();
     }
 
